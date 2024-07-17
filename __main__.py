@@ -146,7 +146,7 @@ def get_item_csv(bucket_name, item_name):
 
 #get_item('hse-cob-watsonx','Data/Contact Details/Municipality_Contact_Details.csv')
 
-print(main('contact','Yellowhead County','Email'))
+print(main('contact','Yellowhead County','Twitter'))
 #print(main(filetype='emission',column_name='GHG Emissions (CO2e tonnes)',YR=2022,PRV='Alberta',OP='none',CSD='Yellowhead County',PED='none',FED='none',SAREA='none'))
 
 
