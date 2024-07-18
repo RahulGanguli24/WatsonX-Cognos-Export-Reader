@@ -1,3 +1,2 @@
-io
 pandas
 ibm-cos-sdk
