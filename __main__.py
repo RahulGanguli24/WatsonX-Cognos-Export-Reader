@@ -62,7 +62,31 @@ def contact_reader(filename, location, ContactType):
 
 
 #-------------------Main Function--------------------                   
-def main(filetype,filename,location='none',column_name='none',YR=0,PRV='none',OP='none',CSD='Yellowhead County',PED='none',FED='none',SAREA='none'):
+#def main(filetype,filename,location='none',column_name='none',YR=0,PRV='none',OP='none',CSD='Yellowhead County',PED='none',FED='none',SAREA='none'):
+def main(args):   
+    # Fetch Parameter values
+    filetype = args.get("filetype", "Missing")
+    location = args.get("location", "Missing")
+    column_name = args.get("column_name", "Missing")
+
+    # If Filetype is not provided no need to execute further
+    if (filetype == "Missing") :
+        return {
+        "headers": {
+            "Content-Type": "application/json",
+        },
+        "statusCode": 200,
+        "body": "Filetype is missing",
+        }
+    
+    # Define File Names
+    filename = "Not Defined"
+    if(filetype == "contact"):
+        filename = "Data/Contact Details/Municipality_Contact_Details.csv"
+    if(filetype == "GHG"):
+        filename = "Data/Cognos/GHG.csv"
+
+   
     
     if filetype=='contact':
         response=contact_reader(filename,location,column_name)
@@ -143,5 +167,6 @@ def get_item_csv(bucket_name, item_name):
 
 #get_item('hse-cob-watsonx','Data/Contact Details/Municipality_Contact_Details.csv')
 
-print(main('contact','Data/Contact Details/Municipality_Contact_Details.csv','Yellowhead County','Twitter'))
+#print(main('contact','Data/Contact Details/Municipality_Contact_Details.csv','Yellowhead County','Twitter'))
 #print(main(filetype='value',filename='Data/Cognos/GHG.csv',column_name='GHG Emissions (CO2e tonnes)',YR=2022,PRV='Alberta',CSD='Yellowhead County'))
+print(main({"filetype":"contact","location":"Yellowhead County","column_name":"Email"}))
