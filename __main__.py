@@ -94,7 +94,7 @@ def main(args):
 
     return {
         'headers' : {
-            'Content-Type': "text/plain;charset=utf-8",
+            'Content-Type': 'application/json',
         },
         'statusCode': 200,
         'body': 'Test',
@@ -168,7 +168,7 @@ def get_item_csv(bucket_name, item_name):
 
 #print(main('contact','Data/Contact Details/Municipality_Contact_Details.csv','Yellowhead County','Twitter'))
 #print(main(filetype='value',filename='Data/Cognos/GHG.csv',column_name='GHG Emissions (CO2e tonnes)',YR=2022,PRV='Alberta',CSD='Yellowhead County'))
-print(main({'filetype':'contact','location':'Woodlands County','column_name':'Email'}))
+#print(main({'filetype':'contact','location':'Woodlands County','column_name':'Email'}))
 #print(main({'filetype':'contact'}))
 
 #get_buckets()
