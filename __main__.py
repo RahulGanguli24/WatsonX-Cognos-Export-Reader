@@ -1,52 +1,43 @@
 import pandas
-import codecs
-import locale
-import logging
 import ibm_boto3
 from ibm_botocore.client import Config, ClientError
 import io
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s : %(message)s')
-
-def mapper(arg):
-    if arg=='The entire province of Alberta':
-        return 'Alberta'
-    if arg=='A particular city or town':
-        return 'Municipality'
-    if arg=='A distinct provincial electoral zone':
-        return 'Provincial Electoral District'
-    if arg=='A particular federal electoral area':
-        return 'Federal Electoral District'
-    if arg=='A unique region, for instance, Indigenous traditional territory':
-        return 'Special Area'
-    return "-1"
-
-
 #-------------------Value Reader Function--------------------
-#def value_reader(filename,metric,YR,PRV,OP,CSD,PED,FED,SAREA):
-def value_reader(filename,metric,YR,PRV,OP,location_type,location):
-    logging.info("Parameters received: filename=%s, metric=%s, YR=%s, PRV=%s, OP=%s, location_type=%s, location=%s", filename, metric, YR, PRV, OP,location_type,location)
+def value_reader(filename,metric,YR,PRV='Alberta',OP='none',CSD='none',PED='none',FED='none',SAREA='none'):
 
     df=pandas.read_csv(get_item_csv('hse-cob-watsonx',filename))
-    
+
     #-------------------Mandatory Filter-------------------#
-    df = df[df['Year'] == YR]
-    df = df[df['Province'] == PRV]
+    df = df[df.Province == PRV]
+    df = df[df.Year == YR]
 
     #-------------------Optional Filter-------------------#
+    if OP =='none':                                             #---Operator
+        df = df[df.Operator == df.Operator] 
+    else:
+        df = df[df.Operator == OP]
+    if CSD =='none':                                             #---CSD
+        df = df[df['Municipality'] == df['Municipality']]  
+    else:
+        df = df[df['Municipality'] == CSD]
+    if PED =='none':                                             #---PED
+        df = df[df['Provincial Electoral District'] == df['Provincial Electoral District']]  
+    else:
+        df = df[df['Provincial Electoral District'] == PED]
+    if FED =='none':                                             #---FED
+        df = df[df['Federal Electoral District'] == df['Federal Electoral District']]  
+    else:
+        df = df[df['Federal Electoral District'] == FED]
+    if SAREA =='none':                                             #---Spcial Area
+        df = df[df['Special Area'] == df['Special Area']]  
+    else:
+        df = df[df['Special Area'] == SAREA]
 
-    if location_type !='Missing':
-        if mapper(location_type) == "-1":
-            return "invalid option for column name"
-        df = df[df[mapper(location_type)] == location]
-    
-    
+    df="{:,}".format(round(float(df[metric].sum()),2))
+    #print(df)
 
-    locale.setlocale(locale.LC_ALL, 'en_CA.UTF-8')
-    result=locale.currency(df[metric].sum(),grouping=True) if metric=='CAD Currency' else "{:,.2f}".format(df[metric].sum())
-
-    #result="{:,.2f}".format(df[metric].sum())
-    return result
+    return 'CA$' + df if metric=='CAD Currency' else df #if len(df) > 0 else 'value unavailable'
 
 #print(value_reader(filename='Data/Cognos/GHG.csv',metric='GHG Emissions (CO2e tonnes)',YR=2022))
 
@@ -58,13 +49,13 @@ def contact_reader(filename, location, ContactType):
     df = df[df['Municipality'] == location]
     
     if ContactType == 'Email':
-        result = df['Email'].values
-    elif ContactType in ('X (twitter) post','Twitter'):
-        result = df['X Handle'].values
+        df = df['Email'].values
+    elif ContactType == 'Twitter':
+        df = df['X Handle'].values
     else:
-        result = 'none'
+        df = 'none'
 
-    return result[0] if len(result) > 0 else 'Contact detail unavailable for ' + location
+    return df[0] #if len(df) > 0 else 'Contact detail unavailable'
 
 #print(contact_reader(filename='Data/Contact Details/Municipality_Contact_Details.csv', location='Yellowhead County', Contacttype='Twitter'))
 
@@ -73,16 +64,12 @@ def contact_reader(filename, location, ContactType):
 #def main(filetype,filename,location='none',column_name='none',YR=0,PRV='none',OP='none',CSD='Yellowhead County',PED='none',FED='none',SAREA='none'):
 def main(args):   
     # Fetch Parameter values
-    filetype = args.get("filetype", "missing").lower()
-    location_type = args.get("location_type", "Missing")
+    filetype = args.get("filetype", "Missing")
     location = args.get("location", "Missing")
     column_name = args.get("column_name", "Missing")
-    YR = args.get("YR", "Missing")
-    PRV = args.get("PRV", "Missing").capitalize()
-    OP = args.get("OP", "Missing")
 
     # If Filetype is not provided no need to execute further
-    if (filetype == "missing") :
+    if (filetype == "Missing") :
         return {
         "headers": {
             "Content-Type": "application/json",
@@ -95,23 +82,15 @@ def main(args):
     filename = "Not Defined"
     if(filetype == "contact"):
         filename = "Data/Contact Details/Municipality_Contact_Details.csv"
-    if(filetype == "ghg"):
+    if(filetype == "GHG"):
         filename = "Data/Cognos/GHG.csv"
-        column_name="GHG Emissions (CO2e tonnes)"
-    if(filetype == "liability"):
-        filename = "Data/Cognos/Cost Liability.csv"
-        column_name= "CAD Currency"
-    if(filetype == "air_health"):
-        filename = "Data/Cognos/Env Health_Acute aquatic toxicity.csv"
-        column_name= "Pollutant Emissions (tonnes)"
-  
+
+   
     
     if filetype=='contact':
         response=contact_reader(filename,location,column_name)
-    if filetype in ('ghg','liability','air_health'):
-        response=value_reader(filename,column_name,YR,PRV,OP,location_type,location)
-
-    logging.info("Main function execution complete, preparing response")
+    if filetype=='value':
+        response=value_reader(filename,column_name,YR,PRV,OP,CSD,PED,FED,SAREA)
 
     return {
         "headers": {
@@ -187,15 +166,9 @@ def get_item_csv(bucket_name, item_name):
 
 #get_item('hse-cob-watsonx','Data/Contact Details/Municipality_Contact_Details.csv')
 
-# print(main({"filetype":"contact","location":"Woodbuffalo","column_name":"Email"}))
-# print(main({"filetype":"contact","location":"Yellowhead County","column_name":"Twitter"}))
+#print(main('contact','Data/Contact Details/Municipality_Contact_Details.csv','Yellowhead County','Twitter'))
+#print(main(filetype='value',filename='Data/Cognos/GHG.csv',column_name='GHG Emissions (CO2e tonnes)',YR=2022,PRV='Alberta',CSD='Yellowhead County'))
+print(main({"filetype":"contact","location":"Woodlands County","column_name":"Email"}))
+#print(main({"filetype":"contact"}))
 
-# print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
-
-
-# print(main({"filetype":"GHG","YR":2020,"PRV":"alberta"}))
-#print(main({"filetype":"GHG","YR":2020,"PRV":"alberta","location_type":"A particular city or town","location":"Yellowhead County"}))
-# print(main({"filetype":"GHG","YR":2020,"PRV":"alberta","location_type":"A particular federal electoral area","location":"Yellowhead"}))
-
-
-
+#get_buckets()
