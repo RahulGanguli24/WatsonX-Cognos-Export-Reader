@@ -113,12 +113,14 @@ def main(args):
 
     logging.info("Main function execution complete, preparing response")
 
+    jsonBody = "{ ""body"": " + response if len(response)>0 else 'Requested data is not available' + "}"
+
     return {
         "headers": {
             "Content-Type": "application/json",
         },
         "statusCode": 200,
-        "body": response if len(response)>0 else 'Requested data is not available',
+        "body": jsonBody,
         }
 
 
