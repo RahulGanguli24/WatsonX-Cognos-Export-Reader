@@ -115,13 +115,13 @@ def main(args):
 
     jsonBody =  response if len(response)>0 else 'Requested data is not available'
 
-    return json.dumps({
+    return {
         "headers": {
             "Content-Type": "application/json",
         },
         "statusCode": 200,
         "body": jsonBody,
-        } )
+        } 
 
 
 def get_cos_client():
