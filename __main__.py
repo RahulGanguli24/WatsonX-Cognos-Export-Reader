@@ -118,7 +118,7 @@ def main(args):
             "Content-Type": "application/json",
         },
         "statusCode": 200,
-        "body": {"body": response if len(response)>0 else 'Requested data is not available' },
+        "body":  response, # if len(response)>0 else 'Requested data is not available' ,
         }
 
 
