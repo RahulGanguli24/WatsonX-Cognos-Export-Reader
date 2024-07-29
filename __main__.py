@@ -118,7 +118,7 @@ def main(args):
             "Content-Type": "application/json",
         },
         "statusCode": 200,
-        "body": response if len(response)>0 else 'Requested data is not available',
+        "body": {"body": response if len(response)>0 else 'Requested data is not available' },
         }
 
 
@@ -188,7 +188,7 @@ def get_item_csv(bucket_name, item_name):
 #get_item('hse-cob-watsonx','Data/Contact Details/Municipality_Contact_Details.csv')
 
 # print(main({"filetype":"contact","location":"Woodbuffalo","column_name":"Email"}))
-#print(main({"filetype":"contact","location":"Yellowhead County","column_name":"Twitter"}))
+print(main({"filetype":"contact","location":"Yellowhead County","column_name":"Twitter"}))
 
 # print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 
