@@ -113,7 +113,7 @@ def main(args):
 
     logging.info("Main function execution complete, preparing response")
 
-    jsonBody =  "{" + json.dumps('body') +  " :  " + json.dumps (response if len(response)>0 else 'Requested data is not available') + "}" 
+    jsonBody =  response if len(response)>0 else 'Requested data is not available'
 
     return {
         "headers": {
