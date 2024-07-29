@@ -1,10 +1,10 @@
 import pandas
+import codecs
 import locale
 import logging
 import ibm_boto3
 from ibm_botocore.client import Config, ClientError
 import io
-import json
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s : %(message)s')
 
@@ -113,15 +113,13 @@ def main(args):
 
     logging.info("Main function execution complete, preparing response")
 
-    jsonBody =  response if len(response)>0 else 'Requested data is not available'
-
     return {
         "headers": {
             "Content-Type": "application/json",
         },
         "statusCode": 200,
-        "body": response,
-        } 
+        "body": response if len(response)>0 else 'Requested data is not available',
+        }
 
 
 def get_cos_client():
