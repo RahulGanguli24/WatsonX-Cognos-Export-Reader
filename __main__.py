@@ -120,7 +120,7 @@ def main(args):
             "Content-Type": "application/json",
         },
         "statusCode": 200,
-        "body": jsonBody,
+        "body": response,
         } 
 
 
