@@ -113,13 +113,13 @@ def main(args):
 
     logging.info("Main function execution complete, preparing response")
 
-    return json.dumps ({
+    return {
         "headers": {
             "Content-Type": "application/json",
         },
         "statusCode": 200,
         "body": response if len(response)>0 else 'Requested data is not available',
-        })
+        }
 
 
 def get_cos_client():
