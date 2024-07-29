@@ -1,5 +1,3 @@
 pandas
 ibm-cos-sdk
-json
-logging
-locale
+
