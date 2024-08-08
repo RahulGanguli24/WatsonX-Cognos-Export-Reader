@@ -1,5 +1,4 @@
-io
 pandas
 ibm-cos-sdk
-json
 locale
+json
