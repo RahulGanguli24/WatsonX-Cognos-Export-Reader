@@ -43,10 +43,10 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location):
     
     
 
-    locale.setlocale(locale.LC_ALL, 'en_CA.UTF-8')
-    result=locale.currency(df[metric].sum(),grouping=True) if metric=='CAD Currency' else "{:,.2f}".format(df[metric].sum())
+    #locale.setlocale(locale.LC_ALL, 'en_CA.UTF-8')
+    #result=locale.currency(df[metric].sum(),grouping=True) if metric=='CAD Currency' else "{:,.2f}".format(df[metric].sum())
 
-    #result="{:,.2f}".format(df[metric].sum())
+    result="{:,.2f}".format(df[metric].sum())
     return result
 
 #print(value_reader(filename='Data/Cognos/GHG.csv',metric='GHG Emissions (CO2e tonnes)',YR=2022))
@@ -190,7 +190,7 @@ def get_item_csv(bucket_name, item_name):
 
 # print(main({"filetype":"contact","location":"Woodbuffalo","column_name":"Email"}))
 #print(main({"filetype":"contact","location":"Yellowhead County","column_name":"Twitter"}))
-
+#https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=contact&location=Yellowhead County&column_name=Twitter
 # print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 
 
