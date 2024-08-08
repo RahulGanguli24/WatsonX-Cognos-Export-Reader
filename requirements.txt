@@ -1,3 +1,2 @@
 pandas
 ibm-cos-sdk
-locale
