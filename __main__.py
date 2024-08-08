@@ -189,13 +189,14 @@ def get_item_csv(bucket_name, item_name):
 #get_item('hse-cob-watsonx','Data/Contact Details/Municipality_Contact_Details.csv')
 
 # print(main({"filetype":"contact","location":"Woodbuffalo","column_name":"Email"}))
-print(main({"filetype":"contact","location":"Yellowhead County","column_name":"Twitter"}))
+#print(main({"filetype":"contact","location":"Yellowhead County","column_name":"Twitter"}))
 
 # print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 
 
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta"}))
-#print(main({"filetype":"GHG","YR":2020,"PRV":"alberta","location_type":"A particular city or town","location":"Yellowhead County"}))
+#print(main({"filetype":"Liability","YR":0,"PRV":"alberta","location_type":"A particular city or town","location":"Yellowhead County"}))
+#https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=Liability&YR=0&location_type=A particular city or town&location=Yellowhead County
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta","location_type":"A particular federal electoral area","location":"Yellowhead"}))
 
 
