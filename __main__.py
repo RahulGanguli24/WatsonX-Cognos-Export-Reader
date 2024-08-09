@@ -33,8 +33,9 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location):
     logging.info("File Records: " + str(len(df.index)) )
     #-------------------Mandatory Filter-------------------#
     df = df[df['Year'] == YR]
+    logging.info("File Records after Year Filter: " + str(len(df.index)) )
     df = df[df['Province'] == PRV]
-    logging.info("Data Frame Records: " + str(len(df.index)) )
+    logging.info("Data Frame Records after Province Filter: " + str(len(df.index)) )
     #-------------------Optional Filter-------------------#
 
     if location_type !='Missing':
@@ -80,6 +81,7 @@ def main(args):
     location = args.get("location", "Missing")
     column_name = args.get("column_name", "Missing")
     YR = args.get("YR", "Missing")
+    #PRV = args.get("PRV", "Missing").capitalize() # Capitalizing doesn't work when deploying to IBM Cloud
     PRV = args.get("PRV", "Missing").capitalize()
     OP = args.get("OP", "Missing")
 
