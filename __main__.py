@@ -28,6 +28,9 @@ def mapper(arg):
 def value_reader(filename,metric,YR,PRV,OP,location_type,location,multiplicationFactor):
     logging.info("Parameters received: filename=%s, metric=%s, YR=%s, PRV=%s, OP=%s, location_type=%s, location=%s, multiplicationFactor=%s", filename, metric, YR, PRV, OP,location_type,location,multiplicationFactor)
     location_type = location_type.replace("%20"," ")
+    if (location_type.find("he entire province") > -1):
+        location_type = 'Missing'
+
     location = location.replace("%20"," ")
     df=pandas.read_csv(get_item_csv('hse-cob-watsonx',filename))
     logging.info("File Records: " + str(len(df.index)) )
@@ -201,11 +204,12 @@ def get_item_csv(bucket_name, item_name):
 
 
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta"}))
-#print(main({"filetype":"Liability","YR":0,"PRV":"Alberta","location_type":"A%20particular%20city%20or%20town","location":"Yellowhead%20County", "mf":"4.27"}))
+#print(main({"filetype":"Liability","YR":0,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta","location":"Yellowhead%20County", "mf":"4.27"}))
+#print(main({"filetype":"Liability","YR":0,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"alberta","location_type":"A particular city or town","location":"Yellowhead County"}))
 #https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=Liability&YR=0&location_type=A particular city or town&location=Yellowhead County&PRV=Alberta
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta","location_type":"A particular federal electoral area","location":"Yellowhead"}))
-
+#https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=Liability&YR=0&PRV=Alberta&location_type=The%20entire%20province%20of%20Alberta
 
 
