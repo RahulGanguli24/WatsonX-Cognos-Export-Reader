@@ -31,6 +31,7 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location):
     location = location.replace("%20"," ")
     df=pandas.read_csv(get_item_csv('hse-cob-watsonx',filename))
     logging.info("File Records: " + str(len(df.index)) )
+    logging.info( df.info )
     #-------------------Mandatory Filter-------------------#
     df = df[df['Year'] == YR]
     logging.info("File Records after Year Filter: " + str(len(df.index)) )
