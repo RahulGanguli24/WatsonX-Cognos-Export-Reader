@@ -30,11 +30,11 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location):
     location_type = location_type.replace("%20"," ")
     location = location.replace("%20"," ")
     df=pandas.read_csv(get_item_csv('hse-cob-watsonx',filename))
-    
+    logging.info("File Records: " + str(len(df.index)) )
     #-------------------Mandatory Filter-------------------#
     df = df[df['Year'] == YR]
     df = df[df['Province'] == PRV]
-
+    logging.info("Data Frame Records: " + str(len(df.index)) )
     #-------------------Optional Filter-------------------#
 
     if location_type !='Missing':
@@ -42,7 +42,7 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location):
             return "invalid option for column name"
         df = df[df[mapper(location_type)] == location]
     
-    
+    logging.info("Records pOst any additional Filter: " + str(len(df.index)) ) 
 
     #locale.setlocale(locale.LC_ALL, 'en_CA.UTF-8')
     #result=locale.currency(df[metric].sum(),grouping=True) if metric=='CAD Currency' else "{:,.2f}".format(df[metric].sum())
@@ -196,9 +196,10 @@ def get_item_csv(bucket_name, item_name):
 
 
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta"}))
-#print(main({"filetype":"Liability","YR":0,"PRV":"alberta","location_type":"A%20particular%20city%20or%20town","location":"Yellowhead%20County"}))
+#print(main({"filetype":"Liability","YR":0,"PRV":"Alberta","location_type":"A%20particular%20city%20or%20town","location":"Yellowhead%20County"}))
+#print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"alberta","location_type":"A particular city or town","location":"Yellowhead County"}))
-#https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=Liability&YR=0&location_type=A particular city or town&location=Yellowhead County&X=0
+#https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=Liability&YR=0&location_type=A particular city or town&location=Yellowhead County&PRV=Alberta
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta","location_type":"A particular federal electoral area","location":"Yellowhead"}))
 
 
