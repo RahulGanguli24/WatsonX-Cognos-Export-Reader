@@ -25,8 +25,8 @@ def mapper(arg):
 
 #-------------------Value Reader Function--------------------
 #def value_reader(filename,metric,YR,PRV,OP,CSD,PED,FED,SAREA):
-def value_reader(filename,metric,YR,PRV,OP,location_type,location):
-    logging.info("Parameters received: filename=%s, metric=%s, YR=%s, PRV=%s, OP=%s, location_type=%s, location=%s", filename, metric, YR, PRV, OP,location_type,location)
+def value_reader(filename,metric,YR,PRV,OP,location_type,location,multiplicationFactor):
+    logging.info("Parameters received: filename=%s, metric=%s, YR=%s, PRV=%s, OP=%s, location_type=%s, location=%s, multiplicationFactor=%s", filename, metric, YR, PRV, OP,location_type,location,multiplicationFactor)
     location_type = location_type.replace("%20"," ")
     location = location.replace("%20"," ")
     df=pandas.read_csv(get_item_csv('hse-cob-watsonx',filename))
@@ -48,8 +48,9 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location):
 
     #locale.setlocale(locale.LC_ALL, 'en_CA.UTF-8')
     #result=locale.currency(df[metric].sum(),grouping=True) if metric=='CAD Currency' else "{:,.2f}".format(df[metric].sum())
-
-    result="{:,.2f}".format(df[metric].sum())
+    result = df[metric].sum()
+    result = result * float(multiplicationFactor) if multiplicationFactor != 0 else result
+    result="{:,.2f}".format(result)
     return result
 
 #print(value_reader(filename='Data/Cognos/GHG.csv',metric='GHG Emissions (CO2e tonnes)',YR=2022))
@@ -85,6 +86,7 @@ def main(args):
     #PRV = args.get("PRV", "Missing").capitalize() # Capitalizing doesn't work when deploying to IBM Cloud
     PRV = args.get("PRV", "Missing").capitalize()
     OP = args.get("OP", "Missing")
+    multiplicationFactor =  args.get("mf", 0)
 
     # If Filetype is not provided no need to execute further
     if (filetype == "missing") :
@@ -114,7 +116,7 @@ def main(args):
     if filetype=='contact':
         response=contact_reader(filename,location,column_name)
     if filetype in ('ghg','liability','air_health'):
-        response=value_reader(filename,column_name,YR,PRV,OP,location_type,location)
+        response=value_reader(filename,column_name,YR,PRV,OP,location_type,location, multiplicationFactor)
 
     logging.info("Main function execution complete, preparing response")
 
@@ -199,7 +201,7 @@ def get_item_csv(bucket_name, item_name):
 
 
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta"}))
-#print(main({"filetype":"Liability","YR":0,"PRV":"Alberta","location_type":"A%20particular%20city%20or%20town","location":"Yellowhead%20County"}))
+#print(main({"filetype":"Liability","YR":0,"PRV":"Alberta","location_type":"A%20particular%20city%20or%20town","location":"Yellowhead%20County", "mf":"4.27"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"alberta","location_type":"A particular city or town","location":"Yellowhead County"}))
 #https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=Liability&YR=0&location_type=A particular city or town&location=Yellowhead County&PRV=Alberta
