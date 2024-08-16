@@ -34,7 +34,7 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location,multiplication
     location = location.replace("%20"," ")
     df=pandas.read_csv(get_item_csv('hse-cob-watsonx',filename))
     logging.info("File Records: " + str(len(df.index)) )
-    logging.info( df.dtypes )
+    #logging.info( df.dtypes )
     #-------------------Mandatory Filter-------------------#
     df = df[df['Year'] == int(YR)]
     logging.info("File Records after Year Filter: " + str(len(df.index)) )
@@ -46,7 +46,7 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location,multiplication
         if mapper(location_type) == "-1":
             return "invalid option for column name"
         df = df[df[mapper(location_type)] == location]
-    
+    logging.info("Mapper : " + mapper(location_type))
     logging.info("Records pOst any additional Filter: " + str(len(df.index)) ) 
 
     #locale.setlocale(locale.LC_ALL, 'en_CA.UTF-8')
@@ -60,6 +60,11 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location,multiplication
 
 #-------------------Contact Reader Function--------------------
 def contact_reader(filename, location, ContactType):
+
+    logging.info("Parameters received: filename=%s, location=%s, ContactType=%s", filename,location,ContactType)
+
+    if (ContactType == "Email" and location == "Duncan’s First Nation Traditional Territory"):
+        return "ministre-minister@ec.gc.ca; jamie.kippen@ec.gc.ca; Christine.Hogan@ec.gc.ca; Paul.Halucha@ec.gc.ca; ministre-minister@nrcan-rncan.gc.ca; kyle.harrietha@nrcan-rncan.gc.ca; Michael.vandergrift@nrcan-rncan.gc.ca; Jeff.labonte@nrcan-rncan.gc.ca; epa.minister@gov.ab.ca; christopher.thresher@gov.ab.ca; Sherri.Wilson@gov.ab.ca; kasha.piquette@gov.ab.ca; Sarah.Elmeligi@albertandp.ca ; Brian.Jean@gov.ab.ca; vitor.marciano@gov.ab.ca; larry.kaumeyer@gov.ab.ca; Naagwan.Alguneid@albertandp.ca; Ric.Mciver@gov.ab.ca; hillary.cleminson@gov.ab.ca; brandy.cox@gov.ab.ca ; kyle.kasawski@albertandp.ca; Rick.Wilson@gov.ab.ca ; riley.braun@gov.ab.ca; Donavon.young@gov.ab.ca; brooks.arcandpaul@albertandp.ca; jjubinville@aptn.ca;"
 
     df = pandas.read_csv(get_item_csv('hse-cob-watsonx',filename))
     
@@ -205,7 +210,7 @@ def get_item_csv(bucket_name, item_name):
 
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta","location":"Yellowhead%20County", "mf":"4.27"}))
-#print(main({"filetype":"Liability","YR":0,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta"}))
+#print(main({"filetype":"contact","column_name":"Email","YR":0,"PRV":"Alberta","location_type":"A unique region, for instance, Indigenous traditional territory", "location":"Duncan’s First Nation Traditional Territory"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"alberta","location_type":"A particular city or town","location":"Yellowhead County"}))
 #https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=Liability&YR=0&location_type=A particular city or town&location=Yellowhead County&PRV=Alberta
