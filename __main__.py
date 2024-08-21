@@ -22,6 +22,21 @@ def mapper(arg):
         return 'Special Area'
     return "-1"
 
+def contact_mapper(arg):
+    if arg=='The entire province of Alberta':
+        return 'Provincial'
+    if arg=='A particular city or town':
+        return 'Municipal district'
+    if arg=='A distinct provincial electoral zone':
+        return 'PED'
+    if arg=='A particular federal electoral area':
+        return 'FED'
+    if arg=='A unique region, for instance, Indigenous traditional territory':
+        return 'Indigenous'
+    if arg=='Indigenous Community (e.g. Reserve)':
+        return 'Indigenous'
+    return "-1"
+
 
 #-------------------Value Reader Function--------------------
 #def value_reader(filename,metric,YR,PRV,OP,CSD,PED,FED,SAREA):
@@ -58,26 +73,44 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location,multiplication
 
 #print(value_reader(filename='Data/Cognos/GHG.csv',metric='GHG Emissions (CO2e tonnes)',YR=2022))
 
+#-------------------Watsonx Contact Module Reader Function--------------------
+def watsonx_contact_reader(location, locationtype):
+
+    df = pandas.read_excel('Data/Watsonx_Contact_Module_Data.xlsx', sheet_name='General_Email_Contact')
+    df=df[df['Email address'].notna()]
+    general_email_selector=contact_mapper(locationtype)
+    if locationtype=='The entire province of Alberta':
+        df = df[df['Provincial'] == 'Yes'] 
+    if locationtype=='A particular city or town':
+        df = df[df['Municipal district'] == 'Yes']
+    if locationtype=='A distinct provincial electoral zone':
+        df = df[df['PED'] == 'Yes']
+    if locationtype=='A particular federal electoral area':
+        df = df[df['FED'] == 'Yes']
+    if locationtype=='A unique region, for instance, Indigenous traditional territory':
+        df = df[df['Indigenous'] == 'Yes']
+    if locationtype=='Indigenous Community (e.g. Reserve)':
+        df = df[df['Indigenous'] == 'Yes']
+
+    df['Email display']=df['Position']+' &lt;'+df['Email address']+'&gt;'
+    email_list = df['Email display'].tolist()
+    email_list = '; '.join( str(email) for email in email_list)
+    #email_list=email_list.replace("nan;",";")
+    return email_list
+
+
 #-------------------Contact Reader Function--------------------
-def contact_reader(filename, location, ContactType):
+def contact_reader(filename, location, locationtype, ContactType):
 
-    logging.info("Parameters received: filename=%s, location=%s, ContactType=%s", filename,location,ContactType)
+    logging.info("Parameters received: filename=%s, location=%s, locationtype=%s ContactType=%s", filename,location,locationtype, ContactType)
 
-    if (ContactType == "Email" and location == "Duncan’s First Nation Traditional Territory"):
-        return "ECCC Minister &lt;ministre-minister@ec.gc.ca&gt;; ECCC Chief of staff &lt;jamie.kippen@ec.gc.ca&gt;; ECCC DM &lt;Christine.Hogan@ec.gc.ca&gt;; ECCC ADM &lt;Paul.Halucha@ec.gc.ca&gt;; NRCan Minister &lt;ministre-minister@nrcan-rncan.gc.ca&gt;; NRCan Chief of staff &lt;kyle.harrietha@nrcan-rncan.gc.ca&gt;; NRCAN DM &lt;Michael.vandergrift@nrcan-rncan.gc.ca&gt;; NRCAN ADM &lt;Jeff.labonte@nrcan-rncan.gc.ca&gt;; AB Environment Minister &lt;epa.minister@gov.ab.ca&gt;; AB Environment Chief of staff &lt;christopher.thresher@gov.ab.ca&gt;; AB Environment DM &lt;Sherri.Wilson@gov.ab.ca&gt;; AB Environment ADM &lt;kasha.piquette@gov.ab.ca&gt;; AB Environment opposition &lt;Sarah.Elmeligi@albertandp.ca &gt;; AB Energy Minister &lt;Brian.Jean@gov.ab.ca&gt;; AB Energy Chief of staff &lt;vitor.marciano@gov.ab.ca&gt;; AB Energy DM &lt;larry.kaumeyer@gov.ab.ca&gt;; AB Energy opposition &lt;Naagwan.Alguneid@albertandp.ca&gt;; AB Municipal affairs minister &lt;Ric.Mciver@gov.ab.ca&gt;; AB Municipal affairs chief of staff &lt;hillary.cleminson@gov.ab.ca&gt;; AB Municipal affairs DM &lt;brandy.cox@gov.ab.ca &gt;; AB Municipal affairs opposition &lt;kyle.kasawski@albertandp.ca&gt;; AB Indigenous relations Minister &lt;Rick.Wilson@gov.ab.ca &gt;; AB Indigenous relations Chief of staff &lt;riley.braun@gov.ab.ca&gt;; AB Indigenous relations DM &lt;Donavon.young@gov.ab.ca&gt;; AB Indigenous relations opposition &lt;brooks.arcandpaul@albertandp.ca&gt;; Provincial news Indigenous &lt;jjubinville@aptn.ca&gt;;"
-
-    df = pandas.read_csv(get_item_csv('hse-cob-watsonx',filename))
+   # if (ContactType == "Email" and location == "Duncan’s First Nation Traditional Territory"):
+   #     return "ECCC Minister &lt;ministre-minister@ec.gc.ca&gt;; ECCC Chief of staff &lt;jamie.kippen@ec.gc.ca&gt;; ECCC DM &lt;Christine.Hogan@ec.gc.ca&gt;; ECCC ADM &lt;Paul.Halucha@ec.gc.ca&gt;; NRCan Minister &lt;ministre-minister@nrcan-rncan.gc.ca&gt;; NRCan Chief of staff &lt;kyle.harrietha@nrcan-rncan.gc.ca&gt;; NRCAN DM &lt;Michael.vandergrift@nrcan-rncan.gc.ca&gt;; NRCAN ADM &lt;Jeff.labonte@nrcan-rncan.gc.ca&gt;; AB Environment Minister &lt;epa.minister@gov.ab.ca&gt;; AB Environment Chief of staff &lt;christopher.thresher@gov.ab.ca&gt;; AB Environment DM &lt;Sherri.Wilson@gov.ab.ca&gt;; AB Environment ADM &lt;kasha.piquette@gov.ab.ca&gt;; AB Environment opposition &lt;Sarah.Elmeligi@albertandp.ca &gt;; AB Energy Minister &lt;Brian.Jean@gov.ab.ca&gt;; AB Energy Chief of staff &lt;vitor.marciano@gov.ab.ca&gt;; AB Energy DM &lt;larry.kaumeyer@gov.ab.ca&gt;; AB Energy opposition &lt;Naagwan.Alguneid@albertandp.ca&gt;; AB Municipal affairs minister &lt;Ric.Mciver@gov.ab.ca&gt;; AB Municipal affairs chief of staff &lt;hillary.cleminson@gov.ab.ca&gt;; AB Municipal affairs DM &lt;brandy.cox@gov.ab.ca &gt;; AB Municipal affairs opposition &lt;kyle.kasawski@albertandp.ca&gt;; AB Indigenous relations Minister &lt;Rick.Wilson@gov.ab.ca &gt;; AB Indigenous relations Chief of staff &lt;riley.braun@gov.ab.ca&gt;; AB Indigenous relations DM &lt;Donavon.young@gov.ab.ca&gt;; AB Indigenous relations opposition &lt;brooks.arcandpaul@albertandp.ca&gt;; Provincial news Indigenous &lt;jjubinville@aptn.ca&gt;;"
     
-    df = df[df['Municipality'] == location]
+    result=watsonx_contact_reader(location,locationtype)
     
-    if ContactType == 'Email':
-        result = df['Email'].values
-    elif ContactType in ('X (twitter) post','Twitter'):
-        result = df['X Handle'].values
-    else:
-        result = 'none'
 
-    return result[0] if len(result) > 0 else 'Contact detail unavailable for ' + location
+    return result if len(result) > 0 else 'Contact detail unavailable for ' + location
 
 #print(contact_reader(filename='Data/Contact Details/Municipality_Contact_Details.csv', location='Yellowhead County', Contacttype='Twitter'))
 
@@ -122,7 +155,7 @@ def main(args):
   
     
     if filetype=='contact':
-        response=contact_reader(filename,location,column_name)
+        response=contact_reader(filename,location,location_type,column_name)
     if filetype in ('ghg','liability','air_health'):
         response=value_reader(filename,column_name,YR,PRV,OP,location_type,location, multiplicationFactor)
 
@@ -202,8 +235,9 @@ def get_item_csv(bucket_name, item_name):
 
 #get_item('hse-cob-watsonx','Data/Contact Details/Municipality_Contact_Details.csv')
 
-# print(main({"filetype":"contact","location":"Woodbuffalo","column_name":"Email"}))
-#print(main({"filetype":"contact","location":"Yellowhead County","column_name":"Twitter"}))
+#print(main({"filetype":"contact","location":"Woodbuffalo","column_name":"Email"}))
+#print(main({"filetype":"contact","location":"The entire province of Alberta","column_name":"Email"}))
+print(main({"filetype":"contact","location":"Indigenous Community (e.g. Reserve)","column_name":"Email"}))
 #https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=contact&location=Yellowhead County&column_name=Twitter
 # print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 
@@ -216,5 +250,3 @@ def get_item_csv(bucket_name, item_name):
 #https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=Liability&YR=0&location_type=A particular city or town&location=Yellowhead County&PRV=Alberta
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta","location_type":"A particular federal electoral area","location":"Yellowhead"}))
 #https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=Liability&YR=0&PRV=Alberta&location_type=The%20entire%20province%20of%20Alberta
-
-
