@@ -132,7 +132,9 @@ def contact_reader(filename, location, locationtype, ContactType):
    # if (ContactType == "Email" and location == "Duncan’s First Nation Traditional Territory"):
    #     return "ECCC Minister &lt;ministre-minister@ec.gc.ca&gt;; ECCC Chief of staff &lt;jamie.kippen@ec.gc.ca&gt;; ECCC DM &lt;Christine.Hogan@ec.gc.ca&gt;; ECCC ADM &lt;Paul.Halucha@ec.gc.ca&gt;; NRCan Minister &lt;ministre-minister@nrcan-rncan.gc.ca&gt;; NRCan Chief of staff &lt;kyle.harrietha@nrcan-rncan.gc.ca&gt;; NRCAN DM &lt;Michael.vandergrift@nrcan-rncan.gc.ca&gt;; NRCAN ADM &lt;Jeff.labonte@nrcan-rncan.gc.ca&gt;; AB Environment Minister &lt;epa.minister@gov.ab.ca&gt;; AB Environment Chief of staff &lt;christopher.thresher@gov.ab.ca&gt;; AB Environment DM &lt;Sherri.Wilson@gov.ab.ca&gt;; AB Environment ADM &lt;kasha.piquette@gov.ab.ca&gt;; AB Environment opposition &lt;Sarah.Elmeligi@albertandp.ca &gt;; AB Energy Minister &lt;Brian.Jean@gov.ab.ca&gt;; AB Energy Chief of staff &lt;vitor.marciano@gov.ab.ca&gt;; AB Energy DM &lt;larry.kaumeyer@gov.ab.ca&gt;; AB Energy opposition &lt;Naagwan.Alguneid@albertandp.ca&gt;; AB Municipal affairs minister &lt;Ric.Mciver@gov.ab.ca&gt;; AB Municipal affairs chief of staff &lt;hillary.cleminson@gov.ab.ca&gt;; AB Municipal affairs DM &lt;brandy.cox@gov.ab.ca &gt;; AB Municipal affairs opposition &lt;kyle.kasawski@albertandp.ca&gt;; AB Indigenous relations Minister &lt;Rick.Wilson@gov.ab.ca &gt;; AB Indigenous relations Chief of staff &lt;riley.braun@gov.ab.ca&gt;; AB Indigenous relations DM &lt;Donavon.young@gov.ab.ca&gt;; AB Indigenous relations opposition &lt;brooks.arcandpaul@albertandp.ca&gt;; Provincial news Indigenous &lt;jjubinville@aptn.ca&gt;;"
     
-    result=watsonx_contact_reader(filename,location,locationtype)
+    result=""
+    if locationtype=='The entire province of Alberta' or locationtype=='A particular city or town' or locationtype=='A unique region, for instance, Indigenous traditional territory' or locationtype=='Indigenous Community (e.g. Reserve)':
+        result=watsonx_contact_reader(filename,location,locationtype)
     
 
     return result if len(result) > 0 else 'Contact detail unavailable for ' + location
@@ -274,7 +276,8 @@ def get_item_File(bucket_name, item_name):
 
 #print(main({"filetype":"contact","location":"Woodbuffalo","column_name":"Email"}))
 #print(main({"filetype":"contact","location":"The entire province of Alberta","column_name":"Email"}))
-#print(main({"filetype":"contact","location_type":"The entire province of Alberta","column_name":"Email"}))
+#print(main({"filetype":"contact","location_type":"Indigenous Community (e.g. Reserve)", "location":"Piikani 147","column_name":"Email"}))
+#print(main({"filetype":"contact","location_type":"A distinct provincial electoral zone", "location":"West Yellowhead","column_name":"Email"}))
 #https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=contact&location=Yellowhead County&column_name=Twitter
 # print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 
