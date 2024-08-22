@@ -71,31 +71,54 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location,multiplication
     result="{:,.2f}".format(result)
     return result
 
-#print(value_reader(filename='Data/Cognos/GHG.csv',metric='GHG Emissions (CO2e tonnes)',YR=2022))
+def generateEmailList(df, emailNameColumn, emailAddressColumn):
+    df['Email display']=df[emailNameColumn]+' &lt;'+df[emailAddressColumn]+'&gt;'
+    email_list = df['Email display'].tolist()
+    email_list = '; '.join( str(email) for email in email_list)
+    return email_list
+
+
+def watsonx_Regional_contact_reader(location, locationtype):
+    #Read the Hierarchy
+    df = pandas.read_excel('Data/Contact Details/Watsonx_Contact_Module_Data.xlsx', sheet_name='Geography_Heirarchy_Relation')
+    df = df[df['Child CSDNAME'] == location]
+    relatedRegions = len(df.index)
+    logging.info("Parents/Related IDs for : " + location + ": " + str(relatedRegions) )
+    allcontactdf = pandas.read_excel('Data/Contact Details/Watsonx_Contact_Module_Data.xlsx', sheet_name='Regional_Email_Contact')
+    relatedcontactdf = allcontactdf[allcontactdf.Region_ID.isin(df.Parent_CSDUID)]
+    locationcontactdf = allcontactdf[allcontactdf['Region_Name'] == location]
+    dfs = [relatedcontactdf , locationcontactdf]
+    dfs = pandas.concat(dfs)
+    #print(dfs)
+    return dfs
 
 #-------------------Watsonx Contact Module Reader Function--------------------
 def watsonx_contact_reader(location, locationtype):
 
-    df = pandas.read_excel('Data/Watsonx_Contact_Module_Data.xlsx', sheet_name='General_Email_Contact')
+#Read General Contacts
+    #df = pandas.read_csv(get_item_File('hse-cob-watsonx','Contact Details/Watsonx_Contact_Module_Data.xlsx'))
+    df = pandas.read_excel(get_item_File('hse-cob-watsonx','Contact Details/Watsonx_Contact_Module_Data.xlsx'), sheet_name='General_Email_Contact')
     df=df[df['Email address'].notna()]
-    general_email_selector=contact_mapper(locationtype)
-    if locationtype=='The entire province of Alberta':
-        df = df[df['Provincial'] == 'Yes'] 
-    if locationtype=='A particular city or town':
-        df = df[df['Municipal district'] == 'Yes']
-    if locationtype=='A distinct provincial electoral zone':
-        df = df[df['PED'] == 'Yes']
-    if locationtype=='A particular federal electoral area':
-        df = df[df['FED'] == 'Yes']
-    if locationtype=='A unique region, for instance, Indigenous traditional territory':
-        df = df[df['Indigenous'] == 'Yes']
-    if locationtype=='Indigenous Community (e.g. Reserve)':
-        df = df[df['Indigenous'] == 'Yes']
+    
+    filterColumn = contact_mapper(locationtype)
+    logging.info("Filter Column for : " + locationtype + ": " + filterColumn )
 
-    df['Email display']=df['Position']+' &lt;'+df['Email address']+'&gt;'
-    email_list = df['Email display'].tolist()
-    email_list = '; '.join( str(email) for email in email_list)
-    #email_list=email_list.replace("nan;",";")
+    df = df[df[filterColumn] == 'Yes']
+
+    #Define from where to pick teh email name and address
+    emailNameColumn = 'Position'
+    emailAddressColumn = 'Email address'
+    
+    #Get General Email List
+    email_list = generateEmailList(df, emailNameColumn, emailAddressColumn)
+    logging.info("General Email list generated for  : " + locationtype + " - "+ location+": " + email_list )
+
+    #Generate Regional List
+    df = watsonx_Regional_contact_reader(location, locationtype)
+    emailNameColumn = 'Contact_Person_Name'
+    emailAddressColumn = 'Email'
+    email_list = email_list + generateEmailList(df, emailNameColumn, emailAddressColumn)
+
     return email_list
 
 
@@ -232,12 +255,24 @@ def get_item_csv(bucket_name, item_name):
     except Exception as e:
         print("Unable to retrieve file contents: {0}".format(e))
 
+def get_item_File(bucket_name, item_name):
+    print("Retrieving item from bucket: {0}, key: {1}".format(bucket_name, item_name))
+    cos_client = get_cos_client()
+    try:
+        File = cos_client.get_object(Bucket=bucket_name, Key=item_name)
+        stream = io.BytesIO(File["Body"].read())
+        return stream
+    except ClientError as be:
+        print("CLIENT ERROR: {0}\n".format(be))
+    except Exception as e:
+        print("Unable to retrieve file contents: {0}".format(e))
+
 
 #get_item('hse-cob-watsonx','Data/Contact Details/Municipality_Contact_Details.csv')
 
 #print(main({"filetype":"contact","location":"Woodbuffalo","column_name":"Email"}))
 #print(main({"filetype":"contact","location":"The entire province of Alberta","column_name":"Email"}))
-print(main({"filetype":"contact","location":"Indigenous Community (e.g. Reserve)","column_name":"Email"}))
+#print(main({"filetype":"contact","location_type":"The entire province of Alberta","column_name":"Email"}))
 #https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=contact&location=Yellowhead County&column_name=Twitter
 # print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 
