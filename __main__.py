@@ -78,13 +78,13 @@ def generateEmailList(df, emailNameColumn, emailAddressColumn):
     return email_list
 
 
-def watsonx_Regional_contact_reader(location, locationtype):
+def watsonx_Regional_contact_reader(filename, location, locationtype):
     #Read the Hierarchy
-    df = pandas.read_excel('Data/Contact Details/Watsonx_Contact_Module_Data.xlsx', sheet_name='Geography_Heirarchy_Relation')
+    df = pandas.read_excel(get_item_File('hse-cob-watsonx',filename), sheet_name='Geography_Heirarchy_Relation')
     df = df[df['Child CSDNAME'] == location]
     relatedRegions = len(df.index)
     logging.info("Parents/Related IDs for : " + location + ": " + str(relatedRegions) )
-    allcontactdf = pandas.read_excel('Data/Contact Details/Watsonx_Contact_Module_Data.xlsx', sheet_name='Regional_Email_Contact')
+    allcontactdf = pandas.read_excel(get_item_File('hse-cob-watsonx',filename), sheet_name='Regional_Email_Contact')
     relatedcontactdf = allcontactdf[allcontactdf.Region_ID.isin(df.Parent_CSDUID)]
     locationcontactdf = allcontactdf[allcontactdf['Region_Name'] == location]
     dfs = [relatedcontactdf , locationcontactdf]
@@ -93,11 +93,11 @@ def watsonx_Regional_contact_reader(location, locationtype):
     return dfs
 
 #-------------------Watsonx Contact Module Reader Function--------------------
-def watsonx_contact_reader(location, locationtype):
+def watsonx_contact_reader(filename,location, locationtype):
 
 #Read General Contacts
     #df = pandas.read_csv(get_item_File('hse-cob-watsonx','Contact Details/Watsonx_Contact_Module_Data.xlsx'))
-    df = pandas.read_excel(get_item_File('hse-cob-watsonx','Contact Details/Watsonx_Contact_Module_Data.xlsx'), sheet_name='General_Email_Contact')
+    df = pandas.read_excel(get_item_File('hse-cob-watsonx',filename), sheet_name='General_Email_Contact')
     df=df[df['Email address'].notna()]
     
     filterColumn = contact_mapper(locationtype)
@@ -111,10 +111,10 @@ def watsonx_contact_reader(location, locationtype):
     
     #Get General Email List
     email_list = generateEmailList(df, emailNameColumn, emailAddressColumn)
-    logging.info("General Email list generated for  : " + locationtype + " - "+ location+": " + email_list )
+    logging.info("General Email list generated for  : " + locationtype + " - "+ location+": "  )
 
     #Generate Regional List
-    df = watsonx_Regional_contact_reader(location, locationtype)
+    df = watsonx_Regional_contact_reader(filename,location, locationtype)
     emailNameColumn = 'Contact_Person_Name'
     emailAddressColumn = 'Email'
     email_list = email_list + generateEmailList(df, emailNameColumn, emailAddressColumn)
@@ -130,7 +130,7 @@ def contact_reader(filename, location, locationtype, ContactType):
    # if (ContactType == "Email" and location == "Duncan’s First Nation Traditional Territory"):
    #     return "ECCC Minister &lt;ministre-minister@ec.gc.ca&gt;; ECCC Chief of staff &lt;jamie.kippen@ec.gc.ca&gt;; ECCC DM &lt;Christine.Hogan@ec.gc.ca&gt;; ECCC ADM &lt;Paul.Halucha@ec.gc.ca&gt;; NRCan Minister &lt;ministre-minister@nrcan-rncan.gc.ca&gt;; NRCan Chief of staff &lt;kyle.harrietha@nrcan-rncan.gc.ca&gt;; NRCAN DM &lt;Michael.vandergrift@nrcan-rncan.gc.ca&gt;; NRCAN ADM &lt;Jeff.labonte@nrcan-rncan.gc.ca&gt;; AB Environment Minister &lt;epa.minister@gov.ab.ca&gt;; AB Environment Chief of staff &lt;christopher.thresher@gov.ab.ca&gt;; AB Environment DM &lt;Sherri.Wilson@gov.ab.ca&gt;; AB Environment ADM &lt;kasha.piquette@gov.ab.ca&gt;; AB Environment opposition &lt;Sarah.Elmeligi@albertandp.ca &gt;; AB Energy Minister &lt;Brian.Jean@gov.ab.ca&gt;; AB Energy Chief of staff &lt;vitor.marciano@gov.ab.ca&gt;; AB Energy DM &lt;larry.kaumeyer@gov.ab.ca&gt;; AB Energy opposition &lt;Naagwan.Alguneid@albertandp.ca&gt;; AB Municipal affairs minister &lt;Ric.Mciver@gov.ab.ca&gt;; AB Municipal affairs chief of staff &lt;hillary.cleminson@gov.ab.ca&gt;; AB Municipal affairs DM &lt;brandy.cox@gov.ab.ca &gt;; AB Municipal affairs opposition &lt;kyle.kasawski@albertandp.ca&gt;; AB Indigenous relations Minister &lt;Rick.Wilson@gov.ab.ca &gt;; AB Indigenous relations Chief of staff &lt;riley.braun@gov.ab.ca&gt;; AB Indigenous relations DM &lt;Donavon.young@gov.ab.ca&gt;; AB Indigenous relations opposition &lt;brooks.arcandpaul@albertandp.ca&gt;; Provincial news Indigenous &lt;jjubinville@aptn.ca&gt;;"
     
-    result=watsonx_contact_reader(location,locationtype)
+    result=watsonx_contact_reader(filename,location,locationtype)
     
 
     return result if len(result) > 0 else 'Contact detail unavailable for ' + location
@@ -165,7 +165,7 @@ def main(args):
     # Define File Names
     filename = "Not Defined"
     if(filetype == "contact"):
-        filename = "Data/Contact Details/Municipality_Contact_Details.csv"
+        filename = "Contact Details/Watsonx_Contact_Module_Data.xlsx"
     if(filetype == "ghg"):
         filename = "Data/Cognos/GHG.csv"
         column_name="GHG Emissions (CO2e tonnes)"
