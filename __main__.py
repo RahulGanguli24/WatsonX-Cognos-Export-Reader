@@ -20,6 +20,8 @@ def mapper(arg):
         return 'Federal Electoral District'
     if arg=='A unique region, for instance, Indigenous traditional territory':
         return 'Special Area'
+    if arg=='Indigenous Community (e.g. Reserve)':
+        return 'Municipality'
     return "-1"
 
 def contact_mapper(arg):
@@ -62,7 +64,7 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location,multiplication
             return "invalid option for column name"
         df = df[df[mapper(location_type)] == location]
     logging.info("Mapper : " + mapper(location_type))
-    logging.info("Records pOst any additional Filter: " + str(len(df.index)) ) 
+    logging.info("Records post any additional Filter: " + str(len(df.index)) ) 
 
     #locale.setlocale(locale.LC_ALL, 'en_CA.UTF-8')
     #result=locale.currency(df[metric].sum(),grouping=True) if metric=='CAD Currency' else "{:,.2f}".format(df[metric].sum())
