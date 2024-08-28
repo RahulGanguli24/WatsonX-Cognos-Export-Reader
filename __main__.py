@@ -77,7 +77,7 @@ def generateEmailList(df, emailNameColumn, emailAddressColumn):
     df['Email display']=df[emailNameColumn]+' &lt;'+df[emailAddressColumn]+'&gt;'
     email_list = df['Email display'].tolist()
     email_list = '; '.join( str(email) for email in email_list)
-    return email_list
+    return email_list +';'
 
 
 def watsonx_Regional_contact_reader(filename, location, locationtype):
@@ -87,6 +87,7 @@ def watsonx_Regional_contact_reader(filename, location, locationtype):
     relatedRegions = len(df.index)
     logging.info("Parents/Related IDs for : " + location + ": " + str(relatedRegions) )
     allcontactdf = pandas.read_excel(get_item_File('hse-cob-watsonx',filename), sheet_name='Regional_Email_Contact')
+    allcontactdf=allcontactdf[allcontactdf['Email'].notna()]
     relatedcontactdf = allcontactdf[allcontactdf.Region_ID.isin(df.Parent_CSDUID)]
     locationcontactdf = allcontactdf[allcontactdf['Region_Name'] == location]
     dfs = [relatedcontactdf , locationcontactdf]
@@ -274,7 +275,7 @@ def get_item_File(bucket_name, item_name):
 
 #get_item('hse-cob-watsonx','Data/Contact Details/Municipality_Contact_Details.csv')
 
-#print(main({"filetype":"contact","location":"Woodbuffalo","column_name":"Email"}))
+#print(main({"filetype":"contact","location_type":"A particular city or town","location":"Drumheller","column_name":"Email"}))
 #print(main({"filetype":"contact","location":"The entire province of Alberta","column_name":"Email"}))
 #print(main({"filetype":"contact","location_type":"Indigenous Community (e.g. Reserve)", "location":"Piikani 147","column_name":"Email"}))
 #print(main({"filetype":"contact","location_type":"A distinct provincial electoral zone", "location":"West Yellowhead","column_name":"Email"}))
