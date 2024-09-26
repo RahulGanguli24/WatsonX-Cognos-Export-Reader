@@ -171,20 +171,47 @@ def main(args):
     filename = "Not Defined"
     if(filetype == "contact"):
         filename = "Contact Details/Watsonx_Contact_Module_Data.xlsx"
+    # -- GHG
     if(filetype == "ghg"):
         filename = "Data/Cognos/GHG.csv"
         column_name="GHG Emissions (CO2e tonnes)"
+    # -- Liability
     if(filetype == "liability"):
         filename = "Data/Cognos/Cost Liability.csv"
         column_name= "CAD Currency"
-    if(filetype == "air_health"):
+    # -- Environmental Health
+    if(filetype == "acute_aquatic"):
         filename = "Data/Cognos/Env Health_Acute aquatic toxicity.csv"
         column_name= "Pollutant Emissions (tonnes)"
+    if(filetype == "chronic_aquatic"):
+        filename = "Data/Cognos/Env Health_Chronic aquatic toxicity.csv"
+        column_name= "Pollutant Emissions (tonnes)"
+    if(filetype == "terrestrial_ecotoxicity"):
+        filename = "Data/Cognos/Env Health_Terrestrial ecotoxicity.csv"
+        column_name= "Pollutant Emissions (tonnes)"
+    # -- Human Health
+    if(filetype == "carcinogenicity"):
+        filename = "Data/Cognos/Human Health_Carcinogenicity.csv"
+        column_name= "Pollutant Emissions (tonnes)"
+    if(filetype == "endocrine"):
+        filename = "Data/Cognos/Human Health_Endocrine activity.csv"
+        column_name= "Pollutant Emissions (tonnes)"
+    if(filetype == "mutagenicity"):
+        filename = "Data/Cognos/Human Health_Mutagenicity Genotoxicity.csv"
+        column_name= "Pollutant Emissions (tonnes)"
+    if(filetype == "reproductive"):
+        filename = "Data/Cognos/Human Health_Reproductive toxicity.csv"
+        column_name= "Pollutant Emissions (tonnes)"
+    if(filetype == "developmental"):
+        filename = "Data/Cognos/Human health_Developmental toxicity including developmental neurotoxicity.csv"
+        column_name= "Pollutant Emissions (tonnes)"
+        
+
   
     
     if filetype=='contact':
         response=contact_reader(filename,location,location_type,column_name)
-    if filetype in ('ghg','liability','air_health'):
+    if filetype in ('ghg','liability','acute_aquatic','chronic_aquatic','terrestrial_ecotoxicity','carcinogenicity','endocrine','mutagenicity','reproductive','developmental'):
         response=value_reader(filename,column_name,YR,PRV,OP,location_type,location, multiplicationFactor)
 
     logging.info("Main function execution complete, preparing response")
