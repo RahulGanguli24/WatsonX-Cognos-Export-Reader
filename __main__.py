@@ -57,7 +57,7 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location,multiplication
         location_type = 'Missing'
 
     location = location.replace("%20"," ")
-    df=pandas.read_csv(get_item_csv('hse-cob-watsonx',filename))
+    df=pandas.read_csv(get_item_csv('hse-cob-watsonx',filename), sep='\t', encoding = 'utf-16')
     logging.info("File Records: " + str(len(df.index)) )
     #logging.info( df.dtypes )
     #-------------------Mandatory Filter-------------------#
@@ -188,7 +188,7 @@ def main(args):
         column_name="GHG Emissions (CO2e tonnes)"
     # -- Liability
     if(filetype == "liability"):
-        filename = "Data/Cognos/Cost Liability.csv"
+        filename = "Cost Liability-en-gb.csv"
         column_name= "CAD Currency"
     # -- Environmental Health
     if(filetype == "acute_aquatic"):
@@ -291,7 +291,7 @@ def get_item_csv(bucket_name, item_name):
     cos_client = get_cos_client()
     try:
         csvFile = cos_client.get_object(Bucket=bucket_name, Key=item_name)
-        stream = io.StringIO(csvFile["Body"].read().decode('utf-8'))
+        stream = io.StringIO(csvFile["Body"].read().decode('utf-16'))
         return stream
     except ClientError as be:
         print("CLIENT ERROR: {0}\n".format(be))
@@ -323,7 +323,7 @@ def get_item_File(bucket_name, item_name):
 
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta","location":"Yellowhead%20County", "mf":"4.27"}))
-#print(main({"filetype":"contact","column_name":"Email","YR":0,"PRV":"Alberta","location_type":"A unique region, for instance, Indigenous traditional territory", "location":"Duncan’s First Nation Traditional Territory"}))
+print(main({"filetype":"Liability","column_name":"Email","YR":0,"PRV":"Alberta","location_type":"Indigenous traditional territory", "location":"Duncan’s First Nation Traditional Territory"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"alberta","location_type":"A particular city or town","location":"Yellowhead County"}))
 #https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=Liability&YR=0&location_type=A particular city or town&location=Yellowhead County&PRV=Alberta
