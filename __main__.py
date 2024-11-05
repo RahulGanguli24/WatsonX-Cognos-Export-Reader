@@ -188,7 +188,7 @@ def main(args):
         column_name="GHG Emissions (CO2e tonnes)"
     # -- Liability
     if(filetype == "liability"):
-        filename = "Cost Liability-en-gb.csv"
+        filename = "Data/Cognos/Cost Liability.csv"
         column_name= "CAD Currency"
     # -- Environmental Health
     if(filetype == "acute_aquatic"):
