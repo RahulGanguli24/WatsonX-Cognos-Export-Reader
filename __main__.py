@@ -216,8 +216,12 @@ def main(args):
     if(filetype == "developmental"):
         filename = "Data/Cognos/Human health_Developmental toxicity including developmental neurotoxicity.csv"
         column_name= "Pollutant Emissions (tonnes)"
-        
-
+    if(filetype == "Production"):
+        filename = "Data/Cognos/Production.csv"
+        if(column_name=="Missing"):
+            column_name="Oil_Volume_BOE"
+    if(filetype == "Asset"):
+        filename = "Data/Cognos/Asset.csv"
   
     
     if filetype=='contact':
@@ -323,7 +327,7 @@ def get_item_File(bucket_name, item_name):
 
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta","location":"Yellowhead%20County", "mf":"4.27"}))
-print(main({"filetype":"Liability","column_name":"Email","YR":0,"PRV":"Alberta","location_type":"Indigenous traditional territory", "location":"Duncan’s First Nation Traditional Territory"}))
+#print(main({"filetype":"Liability","column_name":"Email","YR":0,"PRV":"Alberta","location_type":"Indigenous traditional territory", "location":"Duncan’s First Nation Traditional Territory"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"alberta","location_type":"A particular city or town","location":"Yellowhead County"}))
 #https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=Liability&YR=0&location_type=A particular city or town&location=Yellowhead County&PRV=Alberta
