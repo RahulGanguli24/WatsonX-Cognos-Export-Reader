@@ -74,8 +74,10 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location,multiplication
     logging.info("Mapper : " + mapper(location_type))
     logging.info("Records post any additional Filter: " + str(len(df.index)) ) 
 
+
     #locale.setlocale(locale.LC_ALL, 'en_CA.UTF-8')
     #result=locale.currency(df[metric].sum(),grouping=True) if metric=='CAD Currency' else "{:,.2f}".format(df[metric].sum())
+    logging.info("Metric Column: " + metric ) 
     result = df[metric].sum()
     result = result * float(multiplicationFactor) if multiplicationFactor != 0 else result
     result="{:,.2f}".format(result)
@@ -161,7 +163,7 @@ def main(args):
     filetype = args.get("filetype", "missing").lower()
     location_type = args.get("location_type", "Missing")
     location = args.get("location", "Missing")
-    column_name = args.get("column_name", "Missing")
+    column_name = args.get("column_name", "missing")
     YR = args.get("YR", "Missing")
     #PRV = args.get("PRV", "Missing").capitalize() # Capitalizing doesn't work when deploying to IBM Cloud
     PRV = args.get("PRV", "Missing").capitalize()
@@ -219,15 +221,34 @@ def main(args):
     # Production and Well count
     if(filetype == "production"):
         filename = "Data/Cognos/Production.csv"
-        if(column_name=="Missing"):
+        if(column_name=="missing"):
             column_name="Oil_Volume_BOE"
     if(filetype == "asset"):
         filename = "Data/Cognos/Asset.csv"
+
+    # mines
+    if(filetype == "mines"):
+        filename = "Data/Cognos/Mines.csv"
+        column_name= "Mines_Count"
+
+    #Complaints and Failures
+    if(filetype == "failures"):
+        filename = "Data/Cognos/Failures.csv"
+        if(column_name=="missing"):
+            column_name="Releases"
+    if(filetype == "complaints"):
+        filename = "Data/Cognos/Complaints.csv"
+        column_name= "Complaints"
+
+    #Royalties
+    if(filetype == "royalty"):
+        filename = "Data/Cognos/Royalties.csv"
+        column_name= "Royalty"
   
     
     if filetype=='contact':
         response=contact_reader(filename,location,location_type,column_name)
-    if filetype in ('ghg','liability','acute_aquatic','chronic_aquatic','terrestrial_ecotoxicity','carcinogenicity','endocrine','mutagenicity','reproductive','developmental', 'asset', 'production'):
+    if filetype != 'contact': #in ('ghg','liability','acute_aquatic','chronic_aquatic','terrestrial_ecotoxicity','carcinogenicity','endocrine','mutagenicity','reproductive','developmental', 'asset', 'production'):
         response=value_reader(filename,column_name,YR,PRV,OP,location_type,location, multiplicationFactor)
 
     logging.info("Main function execution complete, preparing response")
@@ -327,8 +348,9 @@ def get_item_File(bucket_name, item_name):
 
 
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta"}))
-#print(main({"filetype":"Liability","YR":0,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta","location":"Yellowhead%20County", "mf":"4.27"}))
-#print(main({"filetype":"production","column_name":"Email","YR":2022,"PRV":"Alberta","location_type":"Indigenous traditional territory", "location":"Duncan’s First Nation Traditional Territory"}))
+#print(main({"filetype":"mines","YR":2021,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta","location":"Yellowhead%20County", "mf":"4.27"}))
+#print(main({"filetype":"royalty","YR":2021,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta","location":"Yellowhead%20County"}))
+#print(main({"filetype":"mines","YR":2021,"PRV":"Alberta","location_type":"Indigenous traditional territory", "location":"Duncan’s First Nation Traditional Territory"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"alberta","location_type":"A particular city or town","location":"Yellowhead County"}))
 #https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=Liability&YR=0&location_type=A particular city or town&location=Yellowhead County&PRV=Alberta
