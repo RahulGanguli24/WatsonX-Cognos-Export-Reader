@@ -26,6 +26,8 @@ def mapper(arg):
         return 'Municipality'
     if arg=='Indigenous traditional territory':
         return 'Special Area'
+    if arg=='Indigenous special area':
+        return 'Special Area'
     return "-1"
 
 def contact_mapper(arg):
