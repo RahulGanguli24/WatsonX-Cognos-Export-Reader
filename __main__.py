@@ -187,7 +187,8 @@ def main(args):
     # -- GHG
     if(filetype == "ghg"):
         filename = "Data/Cognos/GHG.csv"
-        column_name="GHG Emissions (CO2e tonnes)"
+        if(column_name=="missing"):
+            column_name="GHG Emissions (CO2e tonnes)"
     # -- Liability
     if(filetype == "liability"):
         filename = "Data/Cognos/Cost Liability.csv"
@@ -349,7 +350,7 @@ def get_item_File(bucket_name, item_name):
 
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta"}))
 #print(main({"filetype":"mines","YR":2021,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta","location":"Yellowhead%20County", "mf":"4.27"}))
-#print(main({"filetype":"royalty","YR":2021,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta","location":"Yellowhead%20County"}))
+#print(main({"filetype":"ghg","column_name":"CH4 Emissions (CO2e tonnes)","YR":2021,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta","location":"Yellowhead%20County"}))
 #print(main({"filetype":"mines","YR":2021,"PRV":"Alberta","location_type":"Indigenous traditional territory", "location":"Duncan’s First Nation Traditional Territory"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"alberta","location_type":"A particular city or town","location":"Yellowhead County"}))
