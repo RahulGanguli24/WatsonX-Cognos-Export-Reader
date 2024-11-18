@@ -82,7 +82,7 @@ def value_reader(filename,metric,YR,PRV,OP,location_type,location,multiplication
     logging.info("Metric Column: " + metric ) 
     result = df[metric].sum()
     result = result * float(multiplicationFactor) if multiplicationFactor != 0 else result
-    result="{:,.2f}".format(result)
+    result="{:,.0f}".format(result)
     return result
 
 def generateEmailList(df, emailNameColumn, emailAddressColumn):
@@ -352,7 +352,7 @@ def get_item_File(bucket_name, item_name):
 
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta"}))
 #print(main({"filetype":"mines","YR":2021,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta","location":"Yellowhead%20County", "mf":"4.27"}))
-#print(main({"filetype":"Production","column_name":"Gas_Volume_BOE","YR":2022,"PRV":"Alberta","location_type":"Indigenous%20special%20area","location":"Duncan%E2%80%99s%20First%20Nation%20Traditional%20Territory"}))
+#print(main({"filetype":"Production","column_name":"Gas_Volume_BOE","YR":2022,"PRV":"Alberta","location_type":"Indigenous%20special%20area","location":"Duncan's%20First%20Nation%20Traditional%20Territory"}))
 #print(main({"filetype":"mines","YR":2021,"PRV":"Alberta","location_type":"Indigenous traditional territory", "location":"Duncan’s First Nation Traditional Territory"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"alberta","location_type":"A particular city or town","location":"Yellowhead County"}))
