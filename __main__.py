@@ -194,7 +194,8 @@ def main(args):
     # -- Liability
     if(filetype == "liability"):
         filename = "Data/Cognos/Cost Liability.csv"
-        column_name= "CAD Currency"
+    if(column_name=="missing"):
+           column_name= "CAD Currency"
     # -- Environmental Health
     if(filetype == "acute_aquatic"):
         filename = "Data/Cognos/Env Health_Acute aquatic toxicity.csv"
@@ -355,6 +356,7 @@ def get_item_File(bucket_name, item_name):
 #print(main({"filetype":"Production","column_name":"Gas_Volume_BOE","YR":2022,"PRV":"Alberta","location_type":"Indigenous%20special%20area","location":"Duncan's%20First%20Nation%20Traditional%20Territory"}))
 #print(main({"filetype":"mines","YR":2021,"PRV":"Alberta","location_type":"Indigenous traditional territory", "location":"Duncan’s First Nation Traditional Territory"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
+#print(main({"filetype":"Liability","YR":0,"PRV":"Alberta","column_name":"Adjusted_CAD_Currency"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"alberta","location_type":"A particular city or town","location":"Yellowhead County"}))
 #https://cloud-object-reader-watsonx.1j6t9u3ndy9d.ca-tor.codeengine.appdomain.cloud/?filetype=Liability&YR=0&location_type=A particular city or town&location=Yellowhead County&PRV=Alberta
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta","location_type":"A particular federal electoral area","location":"Yellowhead"}))
