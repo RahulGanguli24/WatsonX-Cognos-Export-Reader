@@ -45,6 +45,8 @@ def contact_mapper(arg):
         return 'Indigenous'
     if arg=='Indigenous Community (e.g. Reserve)':
         return 'Indigenous'
+    if arg=='Indigenous reserve':
+        return 'Indigenous'
     if arg=='Indigenous reserve or Metis settlement':
         return 'Indigenous'
     if arg=='Indigenous traditional territory':
@@ -196,8 +198,8 @@ def main(args):
     # -- Liability
     if(filetype == "liability"):
         filename = "Data/Cognos/Cost Liability.csv"
-    if(column_name=="missing"):
-           column_name= "CAD Currency"
+        if(column_name=="missing"):
+            column_name= "CAD Currency"
     # -- Environmental Health
     if(filetype == "acute_aquatic"):
         filename = "Data/Cognos/Env Health_Acute aquatic toxicity.csv"
@@ -355,6 +357,7 @@ def get_item_File(bucket_name, item_name):
 
 # print(main({"filetype":"GHG","YR":2020,"PRV":"alberta"}))
 #print(main({"filetype":"mines","YR":2021,"PRV":"Alberta","location_type":"The%20entire%20province%20of%20Alberta","location":"Yellowhead%20County", "mf":"4.27"}))
+#print(main({"filetype":"Production","YR":2022,"PRV":"Alberta","location_type":"Indigenous reserve","location":"Wood Buffalo"}))
 #print(main({"filetype":"Production","column_name":"Gas_Volume_BOE","YR":2022,"PRV":"Alberta","location_type":"Indigenous%20special%20area","location":"Duncan's%20First%20Nation%20Traditional%20Territory"}))
 #print(main({"filetype":"mines","YR":2021,"PRV":"Alberta","location_type":"Indigenous traditional territory", "location":"Duncan’s First Nation Traditional Territory"}))
 #print(main({"filetype":"Liability","YR":0,"PRV":"Alberta"}))
