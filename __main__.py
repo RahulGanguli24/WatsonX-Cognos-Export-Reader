@@ -22,6 +22,8 @@ def mapper(arg):
         return 'Special Area'
     if arg=='Indigenous Community (e.g. Reserve)':
         return 'Municipality'
+    if arg=='Indigenous reserve':
+        return 'Municipality'
     if arg=='Indigenous reserve or Metis settlement':
         return 'Municipality'
     if arg=='Indigenous traditional territory':
